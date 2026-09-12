@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Passport Photo Maker</title>
+
+    <style>
+
+        /* -----------------------------
+           RESET
+        ------------------------------ */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f6f8;
+            color: #222;
+        }
+
+
+        /* -----------------------------
+           MAIN APP
+        ------------------------------ */
+
+        .app {
+            width: 92%;
+            max-width: 1000px;
+            margin: 50px auto;
+        }
+
+
+        /* -----------------------------
+           HEADER
+        ------------------------------ */
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 34px;
+        }
+
+        .header p {
+            margin-top: 10px;
+            color: #666;
+            font-size: 15px;
+        }
+
+
+        /* -----------------------------
+           UPLOAD CARD
+        ------------------------------ */
+
+        .upload-card {
+            background: white;
+            border-radius: 18px;
+            padding: 35px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+
+
+        /* Important:
+           display:block makes the complete
+           upload area behave correctly. */
+
+        .upload-box {
+            display: block;
+            width: 100%;
+            border: 2px dashed #d0d0d0;
+            border-radius: 14px;
+            padding: 45px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .upload-box:hover {
+            border-color: #222;
+            background: #fafafa;
+        }
+
+
+        .upload-icon {
+            font-size: 42px;
+            margin-bottom: 12px;
+        }
+
+        .upload-box h3 {
+            margin: 8px 0;
+            font-size: 20px;
+        }
+
+        .upload-box p {
+            margin: 8px 0 20px;
+            color: #777;
+            font-size: 14px;
+        }
+
+
+        /* Hide the real file input. */
+        #fileInput {
+            display: none;
+        }
+
+
+        /* -----------------------------
+           BUTTON
+        ------------------------------ */
+
+        .button {
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            background: #222;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .button:hover {
+            background: #444;
+        }
+
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+
+        /* -----------------------------
+           FILE INFORMATION
+        ------------------------------ */
+
+        #fileInfo {
+            display: none;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #555;
+        }
+
+
+        /* -----------------------------
+           PREVIEW AREA
+        ------------------------------ */
+
+        #previewSection {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .preview-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        .preview-card h3 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+
+        /* Image preview box. */
+
+        .image-box {
+            height: 360px;
+            border-radius: 10px;
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            overflow: hidden;
+        }
+
+        .image-box img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+
+        /* Empty preview message. */
+
+        .empty-preview {
+            color: #999;
+            font-size: 14px;
+            text-align: center;
+            padding: 20px;
+        }
+
+
+        /* -----------------------------
+           ACTION BUTTONS
+        ------------------------------ */
+
+        .actions {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .actions .button {
+            margin: 5px;
+        }
+
+        .reset-button {
+            background: #eeeeee;
+            color: #222;
+        }
+
+        .reset-button:hover {
+            background: #dddddd;
+        }
+
+
+        /* -----------------------------
+           LOADING
+        ------------------------------ */
+
+        #loader {
+            display: none;
+
+            width: 32px;
+            height: 32px;
+
+            margin: 25px auto 10px;
+
+            border: 4px solid #ddd;
+            border-top: 4px solid #222;
+
+            border-radius: 50%;
+
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+
+        }
+
+
+        /* -----------------------------
+           STATUS
+        ------------------------------ */
+
+        #status {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+
+        /* -----------------------------
+           RESULT
+        ------------------------------ */
+
+        #resultSection {
+            display: none;
+            margin-top: 35px;
+            background: white;
+            border-radius: 18px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        #resultSection h2 {
+            margin-top: 0;
+        }
+
+        .result-photo {
+            width: 300px;
+            max-width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 8px;
+            background: white;
+        }
+
+        .result-description {
+            color: #666;
+            font-size: 14px;
+            margin: 15px 0 20px;
+        }
+
+
+        /* -----------------------------
+           MOBILE
+        ------------------------------ */
+
+        @media (max-width: 700px) {
+
+            .app {
+                width: 94%;
+                margin: 25px auto;
+            }
+
+            .upload-card {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 27px;
+            }
+
+            .preview-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .image-box {
+                height: 320px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <main class="app">
+
+
+        <!-- HEADER -->
+
+        <header class="header">
+
+            <h1>
+                Passport Photo Maker
+            </h1>
+
+            <p>
+                Remove the background and create a clean
+                passport-style photo.
+            </p>
+
+        </header>
+
+
+        <!-- UPLOAD CARD -->
+
+        <section class="upload-card">
+
+            <label
+                class="upload-box"
+                for="fileInput"
+            >
+
+                <div class="upload-icon">
+                    📷
+                </div>
+
+                <h3>
+                    Upload your photo
+                </h3>
+
+                <p>
+                    Choose a JPG, JPEG or PNG image
+                </p>
+
+                <span class="button">
+                    Choose Photo
+                </span>
+
+            </label>
+
+
+            <!-- Actual file input. -->
+
+            <input
+                type="file"
+                id="fileInput"
+                accept="image/jpeg,image/png"
+            >
+
+
+            <!-- Selected file name. -->
+
+            <div id="fileInfo"></div>
+
+
+        </section>
+
+
+        <!-- PREVIEW -->
+
+        <section id="previewSection">
+
+            <div class="preview-grid">
+
+
+                <!-- ORIGINAL -->
+
+                <div class="preview-card">
+
+                    <h3>
+                        Original Photo
+                    </h3>
+
+                    <div class="image-box">
+
+                        <img
+                            id="originalPreview"
+                            alt="Original photo"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- RESULT PLACEHOLDER -->
+
+                <div class="preview-card">
+
+                    <h3>
+                        Processed Photo
+                    </h3>
+
+                    <div
+                        class="image-box"
+                        id="processedPlaceholder"
+                    >
+
+                        <div class="empty-preview">
+                            Your passport photo
+                            will appear here.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div class="actions">
+
+                <button
+                    class="button"
+                    id="processButton"
+                >
+                    Create Passport Photo
+                </button>
+
+                <button
+                    class="button reset-button"
+                    id="resetButton"
+                >
+                    Reset
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- LOADING -->
+
+        <div id="loader"></div>
+
+
+        <!-- STATUS -->
+
+        <div id="status"></div>
+
+
+        <!-- FINAL RESULT -->
+
+        <section id="resultSection">
+
+            <h2>
+                Your Passport Photo
+            </h2>
+
+            <img
+                id="resultPreview"
+                class="result-photo"
+                alt="Final passport photo"
+            >
+
+            <p class="result-description">
+                Clean white background • Passport-style format
+            </p>
+
+            <button
+                class="button"
+                id="downloadButton"
+            >
+                Download Photo
+            </button>
+
+        </section>
+
+
+    </main>
+
+
+    <script>
+
+
+        // -----------------------------
+        // GET HTML ELEMENTS
+        // -----------------------------
+
+        const fileInput =
+            document.getElementById("fileInput");
+
+        const fileInfo =
+            document.getElementById("fileInfo");
+
+        const previewSection =
+            document.getElementById("previewSection");
+
+        const originalPreview =
+            document.getElementById("originalPreview");
+
+        const processButton =
+            document.getElementById("processButton");
+
+        const resetButton =
+            document.getElementById("resetButton");
+
+        const status =
+            document.getElementById("status");
+
+        const loader =
+            document.getElementById("loader");
+
+        const resultSection =
+            document.getElementById("resultSection");
+
+        const resultPreview =
+            document.getElementById("resultPreview");
+
+        const downloadButton =
+            document.getElementById("downloadButton");
+
+        const processedPlaceholder =
+            document.getElementById(
+                "processedPlaceholder"
+            );
+
+
+        // Store the selected image.
+        let selectedFile = null;
+
+        // Store the processed image.
+        let resultBlob = null;
+
+
+        // -----------------------------
+        // SELECT PHOTO
+        // -----------------------------
+
+        fileInput.addEventListener(
+            "change",
+            function () {
+
+                const file =
+                    fileInput.files[0];
+
+                if (!file) {
+                    return;
+                }
+
+
+                // Store the selected file.
+                selectedFile = file;
+
+
+                // Show file name.
+                fileInfo.textContent =
+                    "Selected: " + file.name;
+
+                fileInfo.style.display =
+                    "block";
+
+
+                // Create temporary preview URL.
+                const imageUrl =
+                    URL.createObjectURL(file);
+
+
+                // Show original image.
+                originalPreview.src =
+                    imageUrl;
+
+
+                // Show preview area.
+                previewSection.style.display =
+                    "block";
+
+
+                // Reset previous result.
+                resultSection.style.display =
+                    "none";
+
+                resultBlob = null;
+
+                status.textContent = "";
+
+
+                // Restore processed placeholder.
+                processedPlaceholder.innerHTML =
+                    `
+                    <div class="empty-preview">
+                        Your passport photo
+                        will appear here.
+                    </div>
+                    `;
+
+            }
+        );
+
+
+        // -----------------------------
+        // PROCESS PHOTO
+        // -----------------------------
+
+        processButton.addEventListener(
+            "click",
+            async function () {
+
+                if (!selectedFile) {
+
+                    status.textContent =
+                        "Please select a photo first.";
+
+                    return;
+                }
+
+
+                // Disable button while processing.
+                processButton.disabled =
+                    true;
+
+
+                // Show loading spinner.
+                loader.style.display =
+                    "block";
+
+
+                status.textContent =
+                    "Processing your photo...";
+
+
+                // Create form data.
+                const formData =
+                    new FormData();
+
+
+                formData.append(
+                    "file",
+                    selectedFile
+                );
+
+
+                try {
+
+                    // Send image to FastAPI.
+                    const response =
+                        await fetch(
+                            "/process",
+                            {
+                                method: "POST",
+                                body: formData
+                            }
+                        );
+
+
+                    // Check for server error.
+                    if (!response.ok) {
+
+                        throw new Error(
+                            "Processing failed."
+                        );
+
+                    }
+
+
+                    // Convert response into image data.
+                    resultBlob =
+                        await response.blob();
+
+
+                    // Create preview URL.
+                    const resultUrl =
+                        URL.createObjectURL(
+                            resultBlob
+                        );
+
+
+                    // Show result in preview card.
+                    processedPlaceholder.innerHTML =
+                        `
+                        <img
+                            src="${resultUrl}"
+                            alt="Processed passport photo"
+                        >
+                        `;
+
+
+                    // Show final result section.
+                    resultPreview.src =
+                        resultUrl;
+
+                    resultSection.style.display =
+                        "block";
+
+
+                    status.textContent =
+                        "Photo created successfully!";
+
+                }
+
+
+                catch (error) {
+
+                    console.error(error);
+
+                    status.textContent =
+                        "Unable to process the photo. Please try again.";
+
+                }
+
+
+                finally {
+
+                    // Hide loading spinner.
+                    loader.style.display =
+                        "none";
+
+                    // Enable process button.
+                    processButton.disabled =
+                        false;
+
+                }
+
+            }
+        );
+
+
+        // -----------------------------
+        // DOWNLOAD
+        // -----------------------------
+
+        downloadButton.addEventListener(
+            "click",
+            function () {
+
+                if (!resultBlob) {
+                    return;
+                }
+
+
+                // Create temporary download URL.
+                const downloadUrl =
+                    URL.createObjectURL(
+                        resultBlob
+                    );
+
+
+                // Create download link.
+                const link =
+                    document.createElement("a");
+
+                link.href =
+                    downloadUrl;
+
+                link.download =
+                    "passport_photo.png";
+
+
+                // Start download.
+                link.click();
+
+
+                // Clean up.
+                URL.revokeObjectURL(
+                    downloadUrl
+                );
+
+            }
+        );
+
+
+        // -----------------------------
+        // RESET
+        // -----------------------------
+
+        resetButton.addEventListener(
+            "click",
+            function () {
+
+                // Clear selected file.
+                selectedFile = null;
+
+                resultBlob = null;
+
+
+                // Reset file input.
+                fileInput.value = "";
+
+
+                // Clear image previews.
+                originalPreview.src = "";
+
+                resultPreview.src = "";
+
+
+                // Hide sections.
+                previewSection.style.display =
+                    "none";
+
+                resultSection.style.display =
+                    "none";
+
+                fileInfo.style.display =
+                    "none";
+
+
+                // Clear status.
+                status.textContent = "";
+
+
+                // Restore placeholder.
+                processedPlaceholder.innerHTML =
+                    `
+                    <div class="empty-preview">
+                        Your passport photo
+                        will appear here.
+                    </div>
+                    `;
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>

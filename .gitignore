@@ -1,0 +1,33 @@
+# Virtual environment
+venv/
+
+# Environment variables / secrets
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Test output
+test_result.png
+
+# IDE files
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+
+# Test/sample images
+test_removed.png
+test_result.png
+simple_background.png
+simple/
+
+# Test and experiment images
+*.jpg
+*.png
+complex/
+medium/
+simple/
